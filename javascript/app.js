@@ -256,7 +256,7 @@ function drawPaddle() {
   //ctx.fillStyle="red";
   //ctx.fillRect(paddle.x - paddle.w * 0.5, paddle.y - paddle.h * 0.5, paddle.w, paddle.h);
   img = new Image();
-  img.src = '../brickBreaker/images/paddle.png''
+  img.src = '..//images/paddle.png''
   ctx.drawImage(img, paddle.x - paddle.w * 0.5, paddle.y - paddle.h * 0.5, paddle.w, paddle.h);
 }
 
@@ -324,6 +324,7 @@ function newBall() {
 }
 
 function newGame() {
+  alert("Press space to start");
   game = true;
   lives = 3;
   level = 1;
