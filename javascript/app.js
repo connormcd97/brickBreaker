@@ -1,4 +1,4 @@
-const paddleSpeed = 1;
+const paddleSpeed = .7;
 let ballSpeed = .35;
 let brickCols = 5;
 let brickRows = 5;
