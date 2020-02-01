@@ -1,9 +1,10 @@
-const paddleSpeed = 0.6;
-const ballSpeed = .4;
+const paddleSpeed = 1;
+let ballSpeed = .35;
 let brickCols = 5;
 let brickRows = 5;
 let margin = 3;
 let brickGap = 3;
+
 spin = .4;
 
 
@@ -11,42 +12,22 @@ let level, lives, score;
 
 const stages = {
   cookieMonster: [
-    '000wwww0wwww0000',
-    '000wwww0wkkw0000',
-    '0kkwkkwbwkkwkkk0',
-    '0bbwkkbbwwwwbbb0',
-    '0bbbbbbbbbbbbbb0',
-    '0bbbbbbbbbbbbbb0',
-    '0bkkbbbbbbbbbbb0',
-    '0bbbkkbbbbbkkkk0',
-    '0bbbkkkkkkkbbbb0',
-    '0bbbbbbbbbbbbbb0',
-    "0bbbbbbbbbbbbbb0",
-    '0kbbbbbbbbbbbbk0',
-    '0kbbbbbbbbbbbbk0',
-    "0bkkkbbbbbbbbkk0",
+   '0www0www0',
+    '0www0wkw0',
+    '0wkwbwww0',
+    'bbbbbbbbb',
+    'bbbbbbbbb',
+    'bbbbbbbbb',
+    'kkbbbbbkk',
+    'bkkkkkkbb',
+    'bkkkkkkbb', 
+    'bkkkkkkbb',
+    'bbbbbbbb0',
+    '0bbbbbb00',
+    '0bbbbbb00',
+    "00bbbbb00",
   ],
-  joker: ['000ggggggggg0000',
-    '00gggwgggggggg00',
-    '0ggwwwwwgggggg00',
-    '0ggwwwwwwwwwggg0',
-    '0ggwkkwwwwkwggg0',
-    '0ggwwkkwwwkkwgg0',
-    '0gggwkwkwkwkwgg0',
-    '0ggwwkkwwwkkwgg0',
-    '0ggwwwwwwwwwgg00',
-    '0ggwpwwwwwwwgg00',
-    '0ggwwpppppwwwgg0',
-    '0ggwwwwwwwwkk000',
-    '0ggwwwwwwwwkk000',
-    '0kgkkkkwwwk00000',
-    '0000000kkk000000',
-    '0000000rrr000000',
-    '00000000r0000000',
-    '0000000rrr000000',
-    '0000000rrr000000',
-    '00000000r0000000',
-  ],
+ 
   mario: [
     " 000rrrrr0000",
     " 0rrrrrrrrr00",
@@ -64,9 +45,30 @@ const stages = {
     " 00rrr00rrr00",
     " 0nnn0000nnn0",
     " nnnn0000nnnn",
-
-
-  ]
+  ],
+  joker: ['00ggggggggg000',
+  '0gggwgggggggg0',
+  'ggwwwwwgggggg0',
+  'ggwwwwwwwwwggg',
+  'ggwkkwwwwkwggg',
+  'ggwwkkwwwkkwgg',
+  'gggwkwkwkwkwgg',
+  'ggwwkkwwwkkwgg',
+  'ggwwwwwwwwwgg0',
+  'ggwpwwwwwwwgg0',
+  'ggwwpppppwwwgg',
+  'ggwwwwwwwwkk00',
+  'ggwwwwwwwwkk00',
+  'ggwwwwwwwwkk00',
+  'kgkkkkwwwk0000',
+  '000000kkk0000',
+  '000000rrr00000',
+  '0000000r000000',
+  '000000rrr00000',
+  '000000rrr00000',
+  '000000rrr00000',
+  '0000000r000000',
+],
 
 
 }
@@ -86,7 +88,7 @@ $('body').append(canvas);
 //game javascript
 var ball, paddle;
 bricks = []
-let brickTotal;
+let brickTotal=0;
 //new game
 let height, width, wall;
 setDimensions();
@@ -159,7 +161,24 @@ function getColor(color) {
 
   return color;
 }
+function getSpecials(row,col){
+  let extraLive=2;
+        
+    while(extraLive>=1){
+    randRow=Math.floor(Math.random()*row);
+    randCol=Math.floor(Math.random()*col);
+    
+    if(bricks[randRow][randCol] && bricks[randRow][randCol].bonus===null){
+      bricks[randRow][randCol].bonus='life';
+      extraLive--;
+      console.log(bricks[randRow][randCol],randRow,randCol);
+      
+  }
 
+  
+}
+  
+}
 function applyBallSpeed(angle) {
   ball.dx = ball.spd * Math.cos(angle); //move ball at start x direction
   ball.dy = -ball.spd * Math.sin(angle); //move ball at start y direction
@@ -169,8 +188,8 @@ function createBricks(obj) {
   let array = obj;
   brickRows = array.length;
   brickCols = array[1].length
-  brickTotal = brickCols * brickRows;
-  let areaY = 470;
+   
+  let areaY = 480;
 
   let totalRows = margin + brickRows;
   let rowH = areaY / totalRows;
@@ -182,7 +201,10 @@ function createBricks(obj) {
   let colW = (totalSpaceX - borderBricks) / brickCols;
   let w = colW - borderBricks;
 
+
+  
   bricks = [];
+
 
   brickCols = array[1].length
   let color, left, top;
@@ -194,14 +216,21 @@ function createBricks(obj) {
     for (let j = 0; j < brickCols; j++) {
       left = borderBricks + j * colW;
       color = getColor(array[i][j])
-
+      
       if (color) {
-        bricks[i][j] = new Brick(left, top, w, h, color);
+        brickTotal++;
+        
+        
+        bricks[i][j] = new Brick(left, top, w, h, color,null);
+        
       } else {
         bricks[i][j] = null;
       }
     }
   }
+  getSpecials(brickRows,brickCols);
+  
+  
 
 }
 
@@ -219,11 +248,16 @@ function drawText() {
   ctx.textAlign = 'center';
   ctx.fillText("Balls:" + lives + "/3", canvas.width / 2, 50);
   ctx.textAlign = 'right';
-  ctx.fillText("level:" + level, canvas.width, 50);
+  ctx.fillText("level:" + level+1, canvas.width, 50);
   if (!game) {
     ctx.fillText("GAME OVER", canvas.width / 2, paddle.y - 200);
     ctx.font = "10px 'Press Start 2P'";
     ctx.fillText("press space for new game!", canvas.width / 2, paddle.y - 150);
+  }
+  if (ball.dy==0 && game) {
+    
+    ctx.font = "10px 'Press Start 2P'";
+    ctx.fillText("press space to  serve!", canvas.width / 2, paddle.y - 150);
   }
 }
 
@@ -234,7 +268,6 @@ function drawBall() {
 
   ctx.fill();
   ctx.closePath();
-
 }
 
 function drawBricks() {
@@ -256,7 +289,7 @@ function drawPaddle() {
   //ctx.fillStyle="red";
   //ctx.fillRect(paddle.x - paddle.w * 0.5, paddle.y - paddle.h * 0.5, paddle.w, paddle.h);
   img = new Image();
-  img.src ='..//images/paddle.png'
+  img.src = '/images/paddle.png'
   ctx.drawImage(img, paddle.x - paddle.w * 0.5, paddle.y - paddle.h * 0.5, paddle.w, paddle.h);
 }
 
@@ -324,10 +357,9 @@ function newBall() {
 }
 
 function newGame() {
-  alert("Press space to start");
   game = true;
-  lives = 3;
-  level = 1;
+  lives = 3 ;
+  level = 0;
   score = 0;
   newLevel(level);
 }
@@ -335,10 +367,15 @@ function newGame() {
 function newLevel(level) {
 
   newBall();
+  
+  if(level>=1){
+    lives++;
+    ballSpeed+=.05
+  }
+  let map = (Object.keys(stages)[level])
 
-  let map = (Object.keys(stages)[0])
-
-  createBricks(stages[map])
+  createBricks(stages[map]);
+  
 }
 
 //createBricks(stages[0]);
@@ -348,10 +385,11 @@ function serve() {
     return;
   }
 
-  let angle = Math.random() * Math.PI / 2 + Math.PI / 4 //random angle between
+  let angle = Math.random() * (Math.PI / 2 + Math.PI / 4) //random angle between
   //45 and 135 degrees
 
-
+ 
+  
   applyBallSpeed(angle);
 }
 
@@ -361,7 +399,7 @@ function newAngleAfterColision() {
 
   let angle = Math.atan2(-ball.dy, ball.dx);
 
-  angle += (Math.random() * Math.PI / 2 - Math.PI / 4) * spin;
+  angle +=  (Math.random() * Math.PI / 2 - Math.PI / 4) * spin;
 
   //gets a random degree +- 45 degrees than uses spin to
   //change the trajectory slightly
@@ -453,21 +491,36 @@ function updateBricks(delta) {
     for (let j = 0; j < brickCols; j++) {
       if (bricks[i][j] != null && bricks[i][j].intersect(ball)) {
         score += 1;
+       
         brickTotal--;
+
+        
+        if(bricks[i][j].bonus){
+          if(bricks[i][j].bonus=='life'){
+            lives++;
+          }
+        }
+        
         if (ball.dy < 0) { // upwards
           ball.y = bricks[i][j].bot + ball.h/2;
         } else { // downwards
           ball.y = bricks[i][j].top - ball.r/2;
         }
-        bricks[i][j] = null;
+        bricks[i][j]=null;
+       
+        
 
 
 
         ball.dy = -ball.dy;
         newAngleAfterColision(); //change angle based on sligt spin
+        
+        
         if (brickTotal == 0) {
+        
+          
           level++;
-          if(level>4){
+          if(level>2){
             game=false;
           }
           newLevel(level);
@@ -493,9 +546,9 @@ function updatePaddle(delta) {
 }
 
 function Ball() {
-  this.w = 30;
-  this.h = 30;
-  this.r = 10;
+  this.w = 60;
+  this.h = 35;
+  this.r = 15 ;
   this.x = paddle.x; //ball starts on paddle
   this.y = paddle.y - paddle.h / 2 - this.h / 2; //sets it on top
   this.spd = ballSpeed * width;
@@ -503,7 +556,7 @@ function Ball() {
   this.dy = 0;
 }
 
-function Brick(left, top, w, h, color) {
+function Brick(left, top, w, h, color,special) {
   this.w = w;
   this.h = h;
   this.bot = top + h;
@@ -511,6 +564,7 @@ function Brick(left, top, w, h, color) {
   this.right = left + w;
   this.top = top;
   this.color = color;
+  this.bonus=special;
 
 
   this.intersect = function(ball) {
@@ -525,10 +579,11 @@ function Brick(left, top, w, h, color) {
 
 
   }
+  
 }
 
 function Paddle() {
-  this.w = 110;
+  this.w = 140   ;
   this.h = 20;
   this.spd = paddleSpeed * width;
   this.x = canvas.width / 2; //halfway across screen
